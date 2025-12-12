@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate; 
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+          Paginator::useBootstrap();
+        Gate::define('isAdmin', function (User $user) {
+            return in_array($user->role, ['admin', 'user']);
+        });
+
+        Gate::define('view-profile',function(User $user){
+            return $user->role === 'admin';
+        });
+
+        Gate::define('edit-profile',function(User $user){
+            return $user->role === 'admin';
+        });
+
+        Gate::define('delete-profile',function(User $user){
+            return $user->role === 'admin';
+        });
+    }
+}
